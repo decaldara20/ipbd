@@ -1,0 +1,27 @@
+# Environment variables (SANGAT PENTING: Jangan bocorkan password!)
+.env
+*.env
+
+# Data storage (Dikecualikan karena terlalu besar atau sensitif)
+data/
+minio_data/
+postgres_data/
+
+# Python cache & virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Docker/System files
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+
+# Log files
+*.log
+
+# Workspace IDE
+.vscode/
+.idea/

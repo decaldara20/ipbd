@@ -1,0 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+kafka-python
+minio
+psycopg2-binary
+scikit-learn
+joblib
+dill
+feedparser
+torch==2.6.0+cpu
+transformers
+safetensors

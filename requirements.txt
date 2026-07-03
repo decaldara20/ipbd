@@ -1,0 +1,9 @@
+feedparser
+newspaper3k
+minio
+lxml_html_clean
+scikit-learn
+pandas
+joblib
+apache-airflow-providers-smtp
+apache-airflow-providers-docker
