@@ -62,7 +62,6 @@ def ekstraksi_berita_ke_minio(**kwargs):
     for keyword in kata_kunci: 
         query_url = urllib.parse.quote(keyword) 
         
-        # Koreksi URL RSS: Menggunakan feed RSS yang valid untuk agregator berita
         urls_rss = [
             f"https://www.bing.com/news/search?q={query_url}&format=rss&cc=id&setlang=id",
             f"https://news.google.com/rss/search?q={query_url}&hl=id&gl=ID&ceid=ID:id"
@@ -70,7 +69,6 @@ def ekstraksi_berita_ke_minio(**kwargs):
         
         for rss_url in urls_rss:
             feed = feedparser.parse(rss_url) 
-            # Mengambil hingga 20 artikel per RSS per kata kunci untuk meningkatkan volume data
             for entry in feed.entries[:20]: 
                 url_asli = entry.link 
                 judul = entry.title 
@@ -80,7 +78,6 @@ def ekstraksi_berita_ke_minio(**kwargs):
                     continue
                 
                 try: 
-                    # Membuka blokir bisnis.com karena merupakan sumber data ekonomi yang sangat kaya
                     if "bloomberg" in url_asli: 
                         continue 
                         
@@ -108,12 +105,8 @@ def ekstraksi_berita_ke_minio(**kwargs):
                 except Exception as e: 
                     print(f"Error pada {url_asli}: {e}") 
 
-    # ==========================================
-    # BAGIAN 2: PROSES AMBIL DATA DARI NEWSAPI 
-    # ==========================================
     API_KEY = "eec8ddc25ab3e781070a30ebb5ff2257"
     
-    # Gabungkan kata kunci menggunakan "OR" untuk menghemat hits (hanya memakai 1 kuota request harian)
     query_string = " OR ".join([f'"{kw}"' for kw in kata_kunci])
     news_api_url = f"https://newsapi.org{urllib.parse.quote(query_string)}&language=id&sortBy=publishedAt&pageSize=100&apiKey={API_KEY}"
     
@@ -125,14 +118,12 @@ def ekstraksi_berita_ke_minio(**kwargs):
             for art in data_json.get("articles", []):
                 url_api = art.get("url")
                 
-                # Cek duplikasi agar tidak menimpa berita yang sudah diambil dari RSS Google/Bing
                 if not url_api or url_api in url_terproses:
                     continue
                 if art.get("title") == "[Removed]":
                     continue
                 
                 raw_source = art.get("source", {}).get("name", "Unknown Source")
-                # Hapus awalan STREAM- jika terdeteksi dari respons API
                 clean_source = raw_source.replace("STREAM-", "") if raw_source else "Unknown Source"
                 
                 semua_berita.append({
